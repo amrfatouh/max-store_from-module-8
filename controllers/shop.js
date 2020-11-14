@@ -22,9 +22,22 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  res.render("shop/cart", {
-    path: "/cart",
-    pageTitle: "Your Cart",
+  Cart.fetchCartProducts((cartProducts) => {
+    Product.fetchAll((products) => {
+      let sentProducts = [];
+      cartProducts.forEach((cProd) => {
+        let sentProd = products.find((p) => p.id === cProd.id);
+        if (sentProd) {
+          sentProd.quantity = cProd.quantity;
+          sentProducts.push(sentProd);
+        }
+      });
+      res.render("shop/cart", {
+        path: "/cart",
+        pageTitle: "Your Cart",
+        products: sentProducts,
+      });
+    });
   });
 };
 
