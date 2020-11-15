@@ -1,16 +1,1 @@
-[
-  {
-    "id": "123",
-    "title": "A Book",
-    "imageUrl": "https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg",
-    "description": "This is an awesome book!",
-    "price": "19"
-  },
-  {
-    "title": "Toy Car",
-    "imageUrl": "https://johnlewis.scene7.com/is/image/JohnLewis/238018258",
-    "description": "red toy car with black seats",
-    "price": "10",
-    "id": "0.00029691928509056886"
-  }
-]
+[{"id":"123","title":"A Book","imageUrl":"https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg","description":"an awesome book","price":"29.99"},{"id":"0.00029691928509056886","title":"Toy Car","imageUrl":"https://4.imimg.com/data4/BB/QU/MY-23659049/kids-toys-bikes-cars-automobile-500x500.jpg","description":"yellow toy car with red seats","price":"5"},{"title":"Pencil","imageUrl":"https://cdn.shopify.com/s/files/1/0027/1089/6705/products/Havest_CedarPencil_1200x1200.jpg?v=1576593250","description":"an awesome pencil","price":"0.99","id":"0.6538750267389677"}]

@@ -11,6 +11,7 @@ const getProductsFromFile = (cb) => {
   fs.readFile(p, (err, fileContent) => {
     if (err) {
       cb([]);
+      console.log("error loading the file");
     } else {
       cb(JSON.parse(fileContent));
     }
@@ -18,7 +19,8 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -26,13 +28,25 @@ module.exports = class Product {
   }
 
   save() {
-    this.id = Math.random().toString();
-    getProductsFromFile((products) => {
-      products.push(this);
-      fs.writeFile(p, JSON.stringify(products), (err) => {
-        console.log(err);
+    if (this.id) {
+      getProductsFromFile((products) => {
+        let thisProductIndex = products.findIndex(
+          (prod) => prod.id === this.id
+        );
+        products[thisProductIndex] = this;
+
+        //rewrite the products array into the file
+        fs.writeFile(p, JSON.stringify(products), (err) => console.log(err));
       });
-    });
+    } else {
+      this.id = Math.random().toString();
+      getProductsFromFile((products) => {
+        products.push(this);
+        fs.writeFile(p, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      });
+    }
   }
 
   static fetchAll(cb) {

@@ -51,6 +51,23 @@ module.exports = class Cart {
     });
   }
 
+  static updateTotalPrice() {
+    fs.readFile(p, (err, fileContent) => {
+      let cart = JSON.parse(fileContent);
+      Product.fetchAll((products) => {
+        let sum = 0;
+        cart.products.forEach((prod) => {
+          sum +=
+            Number(products.find((p) => p.id === prod.id).price) *
+            prod.quantity;
+        });
+        cart.totalPrice = sum;
+        //rewriting the file
+        fs.writeFile(p, JSON.stringify(cart), (err) => console.log(err));
+      });
+    });
+  }
+
   static fetchCartData(cb) {
     fs.readFile(p, (err, fileContent) => {
       let cart;
