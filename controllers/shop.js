@@ -12,13 +12,20 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll((products) => {
-    res.render("shop/index", {
-      prods: products,
-      pageTitle: "Shop",
-      path: "/",
+  Product.getProductById("5fb168e09102144788637a6c")
+    .then((product) => console.log(product))
+    .catch((err) => console.log(err));
+  Product.fetchAll()
+    .then((products) => {
+      res.render("shop/index", {
+        prods: products,
+        pageTitle: "Shop",
+        path: "/",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  });
 };
 
 exports.getCart = (req, res, next) => {

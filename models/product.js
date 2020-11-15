@@ -1,5 +1,7 @@
 const fs = require("fs");
 const path = require("path");
+const { getDb } = require("../util/database");
+const mongodb = require("mongodb");
 
 const p = path.join(
   path.dirname(process.mainModule.filename),
@@ -19,8 +21,7 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(id, title, imageUrl, description, price) {
-    this.id = id;
+  constructor(title, imageUrl, description, price) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -28,35 +29,34 @@ module.exports = class Product {
   }
 
   save() {
-    if (this.id) {
-      getProductsFromFile((products) => {
-        let thisProductIndex = products.findIndex(
-          (prod) => prod.id === this.id
-        );
-        products[thisProductIndex] = this;
-
-        //rewrite the products array into the file
-        fs.writeFile(p, JSON.stringify(products), (err) => console.log(err));
-      });
-    } else {
-      this.id = Math.random().toString();
-      getProductsFromFile((products) => {
-        products.push(this);
-        fs.writeFile(p, JSON.stringify(products), (err) => {
-          console.log(err);
-        });
-      });
-    }
+    const db = getDb();
+    return db
+      .collection("products")
+      .insertOne(this)
+      .then((result) => {
+        console.log(result.ops);
+      })
+      .catch((err) => console.log(err));
   }
 
   static fetchAll(cb) {
-    getProductsFromFile(cb);
+    const db = getDb();
+    return db
+      .collection("products")
+      .find()
+      .toArray()
+      .then((products) => {
+        return products;
+      });
   }
 
-  static getProductById(id, cb) {
-    this.fetchAll((products) => {
-      const product = products.find((prod) => prod.id === id);
-      cb(product);
-    });
+  static getProductById(id) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .find({ _id: mongodb.ObjectId(id) })
+      .next()
+      .then((product) => product)
+      .catch((err) => console.log(err));
   }
 };
