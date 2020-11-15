@@ -22,7 +22,7 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.fetchCartProducts((cartProducts) => {
+  Cart.fetchCartData((cartProducts, totalPrice) => {
     Product.fetchAll((products) => {
       let sentProducts = [];
       cartProducts.forEach((cProd) => {
@@ -36,6 +36,7 @@ exports.getCart = (req, res, next) => {
         path: "/cart",
         pageTitle: "Your Cart",
         products: sentProducts,
+        totalPrice: totalPrice,
       });
     });
   });
@@ -44,6 +45,11 @@ exports.getCart = (req, res, next) => {
 exports.postAddToCart = (req, res, next) => {
   Cart.addToCart(req.body.productId);
   res.redirect("/");
+};
+
+exports.postRemoveFromCart = (req, res, next) => {
+  Cart.removeFromCart(req.body.productId);
+  res.redirect("/cart");
 };
 
 exports.getOrders = (req, res, next) => {

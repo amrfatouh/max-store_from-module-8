@@ -3,14 +3,24 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <% for(let product of products) { %>
-            <div>
-                <h4><%= product.title %></h4>
-                <img src="<%= product.imageUrl %>" alt="<%= product.title %>" width="300" height="300">
-                <div>$<%= product.price %></div>
-                <div><%= product.description %></div>
-                <div>quantity: <%= product.quantity %></div>
-            </div>
+        <% if (products.length > 0) { %>
+            <% for(let product of products) { %>
+                <div>
+                    <h4><%= product.title %></h4>
+                    <img src="<%= product.imageUrl %>" alt="<%= product.title %>" width="300" height="300">
+                    <div>$<%= product.price %></div>
+                    <div><%= product.description %></div>
+                    <div>quantity: <%= product.quantity %></div>
+                    <form action="/remove-from-cart" method="POST">
+                        <button type='submit'>remove item</button>
+                        <input type="text" style="display: none;" name="productId" value="<%= product.id %>">
+                    </form>
+                </div>
+                <br>
+            <% } %>
             <br>
+            <div>total: $<%= totalPrice %></div>
+        <% } else { %>
+            <h2>Nothing added to the cart</h2>
         <% } %>
         <%- include('../includes/end.ejs') %>
