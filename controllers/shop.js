@@ -12,9 +12,6 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.getProductById("5fb168e09102144788637a6c")
-    .then((product) => console.log(product))
-    .catch((err) => console.log(err));
   Product.fetchAll()
     .then((products) => {
       res.render("shop/index", {

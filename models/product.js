@@ -1,45 +1,35 @@
-const fs = require("fs");
-const path = require("path");
 const { getDb } = require("../util/database");
 const mongodb = require("mongodb");
 
-const p = path.join(
-  path.dirname(process.mainModule.filename),
-  "data",
-  "products.json"
-);
-
-const getProductsFromFile = (cb) => {
-  fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-      console.log("error loading the file");
-    } else {
-      cb(JSON.parse(fileContent));
-    }
-  });
-};
-
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
+  constructor(title, imageUrl, description, price, id) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
     this.price = price;
+    this.id = id ? mongodb.ObjectId(id) : null;
   }
 
   save() {
     const db = getDb();
-    return db
-      .collection("products")
-      .insertOne(this)
-      .then((result) => {
-        console.log(result.ops);
-      })
-      .catch((err) => console.log(err));
+    if (this.id) {
+      return db
+        .collection("products")
+        .updateOne({ _id: this.id }, { $set: this })
+        .then((result) => console.log(result))
+        .catch((err) => console.log(err));
+    } else {
+      return db
+        .collection("products")
+        .insertOne(this)
+        .then((result) => {
+          console.log(result.ops);
+        })
+        .catch((err) => console.log(err));
+    }
   }
 
-  static fetchAll(cb) {
+  static fetchAll() {
     const db = getDb();
     return db
       .collection("products")
@@ -57,6 +47,15 @@ module.exports = class Product {
       .find({ _id: mongodb.ObjectId(id) })
       .next()
       .then((product) => product)
+      .catch((err) => console.log(err));
+  }
+
+  static deleteProduct(id) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .deleteOne({ _id: mongodb.ObjectId(id) })
+      .then(() => console.log("object deleted successfully"))
       .catch((err) => console.log(err));
   }
 };
