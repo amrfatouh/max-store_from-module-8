@@ -1,5 +1,6 @@
 const Cart = require("../models/Cart");
 const Product = require("../models/product");
+const User = require("../models/User");
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll((products) => {
@@ -12,6 +13,7 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  // console.log(req.user);
   Product.fetchAll()
     .then((products) => {
       res.render("shop/index", {
