@@ -13,7 +13,6 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  // console.log(req.user);
   Product.fetchAll()
     .then((products) => {
       res.render("shop/index", {
@@ -49,7 +48,9 @@ exports.getCart = (req, res, next) => {
 };
 
 exports.postAddToCart = (req, res, next) => {
-  Cart.addToCart(req.body.productId);
+  Product.getProductById(req.body.productId).then((product) => {
+    req.user.addToCart(product);
+  });
   res.redirect("/");
 };
 
