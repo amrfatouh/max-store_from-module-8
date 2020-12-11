@@ -10,11 +10,11 @@ router.get("/", shopController.getIndex);
 
 router.get("/products", shopController.getProducts);
 
-// router.get("/cart", shopController.getCart);
+router.get("/cart", shopController.getCart);
 
-// router.post("/add-to-cart", shopController.postAddToCart);
+router.post("/add-to-cart", shopController.postAddToCart);
 
-// router.post("/remove-from-cart", shopController.postRemoveFromCart);
+router.post("/remove-from-cart", shopController.postRemoveFromCart);
 
 // router.get("/orders", shopController.getOrders);
 

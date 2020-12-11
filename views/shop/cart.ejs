@@ -6,14 +6,14 @@
         <% if (products.length > 0) { %>
             <% for(let product of products) { %>
                 <div>
-                    <h4><%= product.title %></h4>
-                    <img src="<%= product.imageUrl %>" alt="<%= product.title %>" width="300" height="300">
-                    <div>$<%= product.price %></div>
-                    <div><%= product.description %></div>
+                    <h4><%= product.productId.title %></h4>
+                    <img src="<%= product.productId.imageUrl %>" alt="<%= product.productId.title %>" width="300" height="300">
+                    <div>$<%= product.productId.price %></div>
+                    <div><%= product.productId.description %></div>
                     <div>quantity: <%= product.quantity %></div>
                     <form action="/remove-from-cart" method="POST">
                         <button type='submit'>remove item</button>
-                        <input type="text" style="display: none;" name="productId" value="<%= product._id %>">
+                        <input type="text" style="display: none;" name="productId" value="<%= product.productId._id %>">
                     </form>
                 </div>
                 <br>

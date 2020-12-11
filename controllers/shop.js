@@ -26,33 +26,39 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  req.user.getCart().then((products) => {
-    let totalPrice;
-    if (products) {
-      totalPrice = products.reduce(
-        (p, c) => p + Number(c.price) * c.quantity,
-        0
-      );
-    }
-    res.render("shop/cart", {
-      path: "/cart",
-      pageTitle: "Your Cart",
-      products: products,
-      totalPrice: totalPrice,
+  req.user
+    .populate("cart.items.productId")
+    .execPopulate()
+    .then((user) => {
+      let totalPrice;
+      let products = user.cart.items;
+      if (products) {
+        totalPrice = products.reduce(
+          (p, c) => p + Number(c.productId.price) * c.quantity,
+          0
+        );
+      }
+      res.render("shop/cart", {
+        path: "/cart",
+        pageTitle: "Your Cart",
+        products: products,
+        totalPrice: totalPrice,
+      });
     });
-  });
 };
 
 exports.postAddToCart = (req, res, next) => {
-  Product.getProductById(req.body.productId).then((product) => {
-    req.user.addToCart(product);
-  });
-  res.redirect("/");
+  Product.findById(req.body.productId)
+    .then((product) => {
+      req.user.addToCart(product);
+    })
+    .then(() => res.redirect("/"));
 };
 
 exports.postRemoveFromCart = (req, res, next) => {
-  req.user.deleteItemFromCart(req.body.productId);
-  res.redirect("/cart");
+  req.user
+    .deleteItemFromCart(req.body.productId)
+    .then(() => res.redirect("/cart"));
 };
 
 exports.getOrders = (req, res, next) => {
