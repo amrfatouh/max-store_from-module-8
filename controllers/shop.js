@@ -13,10 +13,6 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  req.user.getCart().then((products) => {
-    console.log(products);
-    console.log(products.reduce((p, c) => p + Number(c.price) * c.quantity, 0));
-  });
   Product.fetchAll()
     .then((products) => {
       res.render("shop/index", {
@@ -32,10 +28,13 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user.getCart().then((products) => {
-    let totalPrice = products.reduce(
-      (p, c) => p + Number(c.price) * c.quantity,
-      0
-    );
+    let totalPrice;
+    if (products) {
+      totalPrice = products.reduce(
+        (p, c) => p + Number(c.price) * c.quantity,
+        0
+      );
+    }
     res.render("shop/cart", {
       path: "/cart",
       pageTitle: "Your Cart",
@@ -58,9 +57,13 @@ exports.postRemoveFromCart = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  res.render("shop/orders", {
-    path: "/orders",
-    pageTitle: "Your Orders",
+  req.user.getOrders().then((orders) => {
+    console.log(orders);
+    res.render("shop/orders", {
+      path: "/orders",
+      pageTitle: "Your Orders",
+      orders: orders,
+    });
   });
 };
 

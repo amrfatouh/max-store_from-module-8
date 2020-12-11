@@ -10,13 +10,17 @@ class User {
   }
 
   addToCart(product) {
-    const cartProductIndex = this.cart.items.findIndex(
-      (ci) => ci.productId.toString() === product._id.toString()
-    );
-    if (cartProductIndex >= 0) {
-      this.cart.items[cartProductIndex].quantity += 1;
-    } else {
+    let cartProductIndex;
+    if (this.cart.items.length > 0) {
+      cartProductIndex = this.cart.items.findIndex(
+        (ci) => ci.productId.toString() === product._id.toString()
+      );
+    }
+
+    if (!cartProductIndex || cartProductIndex < 0) {
       this.cart.items.push({ productId: product._id, quantity: 1 });
+    } else {
+      this.cart.items[cartProductIndex].quantity += 1;
     }
     const db = getDb();
     return db
@@ -32,16 +36,16 @@ class User {
       .collection("products")
       .find({ _id: { $in: this.cart.items.map((i) => i.productId) } })
       .toArray()
-      .then((products) =>
-        products.map((p) => {
+      .then((products) => {
+        return products.map((p) => {
           return {
             ...p,
             quantity: this.cart.items.find(
               (i) => i.productId.toString() === p._id.toString()
             ).quantity,
           };
-        })
-      )
+        });
+      })
       .catch((err) => console.log(err));
   }
 
@@ -54,6 +58,27 @@ class User {
       .collection("users")
       .updateOne({ _id: this._id }, { $set: { cart: this.cart } })
       .catch((err) => console.log(err));
+  }
+
+  addOrder() {
+    this.getCart().then((products) => {
+      let order = { items: products, user: { _id: this._id } };
+      const db = getDb();
+      return db
+        .collection("orders")
+        .insertOne(order)
+        .then(() => {
+          this.cart = [];
+          db.collection("users")
+            .updateOne({ _id: this._id }, { $set: { cart: { items: [] } } })
+            .catch((err) => console.log(err));
+        });
+    });
+  }
+
+  getOrders() {
+    const db = getDb();
+    return db.collection("orders").find({ "user._id": this._id }).toArray();
   }
 
   save() {
