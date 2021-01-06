@@ -14,6 +14,7 @@
                     <form action="/remove-from-cart" method="POST">
                         <button type='submit'>remove item</button>
                         <input type="text" style="display: none;" name="productId" value="<%= product.productId._id %>">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     </form>
                 </div>
                 <br>
